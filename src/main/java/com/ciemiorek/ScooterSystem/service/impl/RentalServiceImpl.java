@@ -10,10 +10,11 @@ import com.ciemiorek.ScooterSystem.repository.UserAccountRepository;
 import com.ciemiorek.ScooterSystem.service.AbstractCommonService;
 import com.ciemiorek.ScooterSystem.service.RentalService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.Optional;
-
+@Service
 public class RentalServiceImpl extends AbstractCommonService implements RentalService {
     private UserAccountRepository userAccountRepository;
     private ScooterRepository scooterRepository;

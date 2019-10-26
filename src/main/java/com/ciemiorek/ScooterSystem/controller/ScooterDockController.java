@@ -15,8 +15,6 @@ import java.util.Set;
 public class ScooterDockController {
     private ScooterDockService scooterDockService;
 
-    public ScooterDockController() {
-    }
 
     public ScooterDockController(ScooterDockService scooterDockService) {
         this.scooterDockService = scooterDockService;

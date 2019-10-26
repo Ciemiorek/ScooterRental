@@ -8,7 +8,9 @@ import org.springframework.context.annotation.PropertySource;
 @SpringBootApplication
 @PropertySource("classpath:message.properties")
 @ComponentScan(basePackages = {
+
         "com.ciemiorek.ScooterSystem.controller",
+        "com.ciemiorek.ScooterSystem.service",
         "com.ciemiorek.ScooterSystem.common",
         "com.ciemiorek.ScooterSystem.model",
         "com.ciemiorek.ScooterSystem.repository"

@@ -15,8 +15,7 @@ public class RentalController {
         this.rentalService = rentalService;
     }
 
-    public RentalController() {
-    }
+
 
     @PostMapping (value = "/{sooterId}/scooter", produces = "application/json" )
     public ResponseEntity<BasicResponse> rentScooter (

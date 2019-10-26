@@ -19,8 +19,6 @@ public class ScooterController {
         this.scooterService = scooterService;
     }
 
-    public ScooterController() {
-    }
 
     @PostMapping(value = "/add", produces = "application/json")
     public ResponseEntity<AddScooterResponse> addScooter(

@@ -13,8 +13,6 @@ public class UserAccountController {
 
     private UserAccountService userAccountService;
 
-    public UserAccountController() {
-    }
 
     public UserAccountController(UserAccountService userAccountService) {
         this.userAccountService = userAccountService;
