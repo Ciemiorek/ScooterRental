@@ -10,4 +10,6 @@ public interface UserAccountService {
     ResponseEntity<CreateUserAccountResponse> createUserAccount (CreateUserAccountRequest request);
     ResponseEntity<BasicResponse> rechargeUserAccount (Long accountId, String amount);
     ResponseEntity<ReturnInformationAboutScooterResponse> getInformationAboutRentScooterByEmail(String email);
+    ResponseEntity<BasicResponse> getBalancea ( String email);
+
 }

@@ -1,5 +1,6 @@
 package com.ciemiorek.ScooterSystem.service.impl;
 
+import com.ciemiorek.ScooterSystem.api.response.BalanceResponse;
 import com.ciemiorek.ScooterSystem.api.response.ReturnInformationAboutScooterResponse;
 import com.ciemiorek.ScooterSystem.common.MsgSource;
 import com.ciemiorek.ScooterSystem.api.request.CreateUserAccountRequest;
@@ -54,6 +55,14 @@ public class UserAccountServiceImpl extends AbstractCommonService implements Use
         List<UserAccount> listOfUser= userAccountRepository.findByOwnerEmail(email);
         Scooter scooter = listOfUser.get(0).getScooter();
         return ResponseEntity.ok(new ReturnInformationAboutScooterResponse(msgSource.OK005,scooter.getId(),scooter.getModelName(),scooter.getMaxSpeed(),scooter.getRentalPrice()));
+    }
+
+    @Override
+    public ResponseEntity<BasicResponse> getBalancea(String email) {
+        checkUserExistByEmail(email);
+        List<UserAccount> listOfUser= userAccountRepository.findByOwnerEmail(email);
+        BigDecimal balance = listOfUser.get(0).getBalance();
+        return ResponseEntity.ok(new BalanceResponse(msgSource.OK007,balance));
     }
 
     private void addRechargeAmountToUserAccountBalace(Long accountId, BigDecimal rechargeAmount) {

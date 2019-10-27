@@ -12,6 +12,7 @@ public class MsgSource {
     public final String OK004;
     public final String OK005;
     public final String OK006;
+    public final String OK007;
 
     public final ConstErrorMsg Err001;
     public final ConstErrorMsg Err002;
@@ -37,6 +38,7 @@ public class MsgSource {
             @Value("${common.ok.msg.ok004}") String ok004MsgValue,
             @Value("${common.ok.msg.ok005}") String ok005MsgValue,
             @Value("${common.ok.msg.ok006}") String ok006MsgValue,
+            @Value("${common.ok.msg.ok007}") String ok007MsgValue,
 
 
             @Value("${common.const.error.msg.err001}") String err001MsgValue,
@@ -62,6 +64,7 @@ public class MsgSource {
         OK004 = ok004MsgValue;
         OK005 = ok005MsgValue;
         OK006 = ok006MsgValue;
+        OK007 = ok007MsgValue;
 
         Err001 = new ConstErrorMsg("ERR001", err001MsgValue);
         Err002 = new ConstErrorMsg("ERR002", err002MsgValue);

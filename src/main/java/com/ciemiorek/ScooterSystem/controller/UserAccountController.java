@@ -42,4 +42,11 @@ public class UserAccountController {
         return userAccountService.getInformationAboutRentScooterByEmail(email);
     }
 
+    @GetMapping(value = "/balance", produces = "application/json")
+    public ResponseEntity<BasicResponse> getBalance (
+            @RequestParam String email
+    ) {
+        return userAccountService.getBalancea(email);
+    }
+
 }
