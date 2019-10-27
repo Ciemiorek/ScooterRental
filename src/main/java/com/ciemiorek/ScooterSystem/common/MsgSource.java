@@ -13,6 +13,9 @@ public class MsgSource {
     public final String OK005;
     public final String OK006;
     public final String OK007;
+    public final String OK008;
+    public final String OK009;
+    public final String OK010;
 
     public final ConstErrorMsg Err001;
     public final ConstErrorMsg Err002;
@@ -30,6 +33,8 @@ public class MsgSource {
     public final ConstErrorMsg Err014;
     public final ConstErrorMsg Err015;
     public final ConstErrorMsg Err016;
+    public final ConstErrorMsg Err017;
+    public final ConstErrorMsg Err018;
 
     public MsgSource(
             @Value("${common.ok.msg.ok001}") String ok001MsgValue,
@@ -39,6 +44,9 @@ public class MsgSource {
             @Value("${common.ok.msg.ok005}") String ok005MsgValue,
             @Value("${common.ok.msg.ok006}") String ok006MsgValue,
             @Value("${common.ok.msg.ok007}") String ok007MsgValue,
+            @Value("${common.ok.msg.ok008}") String ok008MsgValue,
+            @Value("${common.ok.msg.ok009}") String ok009MsgValue,
+            @Value("${common.ok.msg.ok010}") String ok010MsgValue,
 
 
             @Value("${common.const.error.msg.err001}") String err001MsgValue,
@@ -56,7 +64,10 @@ public class MsgSource {
             @Value("${common.const.error.msg.err013}") String err013MsgValue,
             @Value("${common.const.error.msg.err014}") String err014MsgValue,
             @Value("${common.const.error.msg.err015}") String err015MsgValue,
-            @Value("${common.const.error.msg.err016}") String err016MsgValue)
+            @Value("${common.const.error.msg.err016}") String err016MsgValue,
+            @Value("${common.const.error.msg.err017}") String err017MsgValue,
+            @Value("${common.const.error.msg.err018}") String err018MsgValue
+    )
     {
         OK001 = ok001MsgValue;
         OK002 = ok002MsgValue;
@@ -65,6 +76,9 @@ public class MsgSource {
         OK005 = ok005MsgValue;
         OK006 = ok006MsgValue;
         OK007 = ok007MsgValue;
+        OK008 = ok008MsgValue;
+        OK009 = ok009MsgValue;
+        OK010 = ok010MsgValue;
 
         Err001 = new ConstErrorMsg("ERR001", err001MsgValue);
         Err002 = new ConstErrorMsg("ERR002", err002MsgValue);
@@ -82,5 +96,7 @@ public class MsgSource {
         Err014 = new ConstErrorMsg("ERR014", err014MsgValue);
         Err015 = new ConstErrorMsg("ERR015", err015MsgValue);
         Err016 = new ConstErrorMsg("ERR016", err016MsgValue);
+        Err017 = new ConstErrorMsg("ERR017", err017MsgValue);
+        Err018 = new ConstErrorMsg("ERR018", err018MsgValue);
     }
 }

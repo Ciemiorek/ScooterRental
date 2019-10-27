@@ -44,9 +44,24 @@ public class UserAccountController {
 
     @GetMapping(value = "/balance", produces = "application/json")
     public ResponseEntity<BasicResponse> getBalance (
+            @RequestParam Long userID
+    ) {
+        return userAccountService.getBalancea(userID);
+    }
+
+    @DeleteMapping(value = "/delete", produces = "application/json")
+    public ResponseEntity<BasicResponse> deleteUser (
             @RequestParam String email
     ) {
-        return userAccountService.getBalancea(email);
+        return userAccountService.deleteUser(email);
+    }
+
+    @PutMapping(value = "/{accountEmail}/email" , produces = "application/json")
+    public ResponseEntity<BasicResponse> changeEmail(
+            @PathVariable String accountEmail,
+            @RequestParam String emailToReplace
+    ) {
+        return userAccountService.changeEmail(accountEmail,emailToReplace);
     }
 
 }

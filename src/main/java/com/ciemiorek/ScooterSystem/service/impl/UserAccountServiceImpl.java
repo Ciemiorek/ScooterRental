@@ -13,8 +13,10 @@ import com.ciemiorek.ScooterSystem.model.UserAccount;
 import com.ciemiorek.ScooterSystem.repository.UserAccountRepository;
 import com.ciemiorek.ScooterSystem.service.AbstractCommonService;
 import com.ciemiorek.ScooterSystem.service.UserAccountService;
+import org.apache.catalina.User;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -38,13 +40,13 @@ public class UserAccountServiceImpl extends AbstractCommonService implements Use
         validateCreateAccountRequest(request);
         checkOwnerEmailAlreadyExist(request.getOwnerEmail());
         UserAccount addedAccount = addUserAccountToDataSource(request);
-        return ResponseEntity.ok(new CreateUserAccountResponse(msgSource.OK001,addedAccount.getId()));
+        return ResponseEntity.ok(new CreateUserAccountResponse(msgSource.OK001, addedAccount.getId()));
     }
 
     @Override
     public ResponseEntity<BasicResponse> rechargeUserAccount(Long accountId, String amount) {
         BigDecimal rechargeAmount = extractAmountToBigDecimal(amount);
-        addRechargeAmountToUserAccountBalace(accountId,rechargeAmount);
+        addRechargeAmountToUserAccountBalace(accountId, rechargeAmount);
         return ResponseEntity.ok(BasicResponse.of(msgSource.OK002));
     }
 
@@ -52,18 +54,45 @@ public class UserAccountServiceImpl extends AbstractCommonService implements Use
     public ResponseEntity<ReturnInformationAboutScooterResponse> getInformationAboutRentScooterByEmail(String email) {
         checkUserExistByEmail(email);
         checkUserHaveRentScooter(email);
-        List<UserAccount> listOfUser= userAccountRepository.findByOwnerEmail(email);
+        List<UserAccount> listOfUser = userAccountRepository.findByOwnerEmail(email);
         Scooter scooter = listOfUser.get(0).getScooter();
-        return ResponseEntity.ok(new ReturnInformationAboutScooterResponse(msgSource.OK005,scooter.getId(),scooter.getModelName(),scooter.getMaxSpeed(),scooter.getRentalPrice()));
+        return ResponseEntity.ok(new ReturnInformationAboutScooterResponse(msgSource.OK005, scooter.getId(), scooter.getModelName(), scooter.getMaxSpeed(), scooter.getRentalPrice()));
     }
 
     @Override
-    public ResponseEntity<BasicResponse> getBalancea(String email) {
-        checkUserExistByEmail(email);
-        List<UserAccount> listOfUser= userAccountRepository.findByOwnerEmail(email);
-        BigDecimal balance = listOfUser.get(0).getBalance();
-        return ResponseEntity.ok(new BalanceResponse(msgSource.OK007,balance));
+    public ResponseEntity<BasicResponse> getBalancea(Long userID) {
+        checkUserWithIdExist(userID);
+        Optional<UserAccount> optionalUserAccount =userAccountRepository.findById(userID);
+        UserAccount userAccount = optionalUserAccount.get();
+        BigDecimal balance = userAccount.getBalance();
+        return ResponseEntity.ok(new BalanceResponse(msgSource.OK007, balance));
     }
+
+    @Override
+    @Transactional
+    public ResponseEntity<BasicResponse> deleteUser(String email) {
+        checkUserExistByEmail(email);
+        List<UserAccount> userAccountList = userAccountRepository.findByOwnerEmail(email);
+        UserAccount userAccountToRemove =userAccountList.get(0);
+        userAccountRepository.delete(userAccountToRemove);
+        return ResponseEntity.ok(BasicResponse.of(msgSource.OK008));
+    }
+
+    @Override
+    @Transactional
+    public ResponseEntity<BasicResponse> changeEmail(String accountEmail, String emailToReplace) {
+        checkUserExistByEmail(accountEmail);
+        List<UserAccount> userAccountsList = userAccountRepository.findByOwnerEmail(accountEmail);
+        UserAccount userAccount = userAccountsList.get(0);
+        if(isUncorrectedEmail(emailToReplace)){
+            throw new CommonConflictException(msgSource.Err002);
+        }
+        userAccount.setOwnerEmail(emailToReplace);
+        userAccountRepository.save(userAccount);
+        return ResponseEntity.ok(BasicResponse.of(msgSource.OK009));
+    }
+
+
 
     private void addRechargeAmountToUserAccountBalace(Long accountId, BigDecimal rechargeAmount) {
         Optional<UserAccount> userAccountData = userAccountRepository.findById(accountId);
@@ -78,7 +107,7 @@ public class UserAccountServiceImpl extends AbstractCommonService implements Use
     private BigDecimal extractAmountToBigDecimal(String amount) {
         try {
             return new BigDecimal(amount);
-        }catch (NumberFormatException nfe) {
+        } catch (NumberFormatException nfe) {
             throw new CommonBadRequestException(msgSource.Err005);
         }
 
@@ -99,15 +128,23 @@ public class UserAccountServiceImpl extends AbstractCommonService implements Use
         }
     }
 
-    private void checkOwnerEmailAlreadyExist (String ownerEmail) {
-        List<UserAccount> userAccounts =userAccountRepository.findByOwnerEmail(ownerEmail);
+    private void checkOwnerEmailAlreadyExist(String ownerEmail) {
+        List<UserAccount> userAccounts = userAccountRepository.findByOwnerEmail(ownerEmail);
         if (!userAccounts.isEmpty()) {
             throw new CommonConflictException(msgSource.Err004);
         }
     }
 
+    private void checkUserWithIdExist(Long userID) {
+        Optional<UserAccount> optionalUserAccount = userAccountRepository.findById(userID);
+        if (!optionalUserAccount.isPresent()){
+            throw new CommonConflictException(msgSource.Err006);
+        }
 
-    private UserAccount addUserAccountToDataSource (CreateUserAccountRequest request) {
+    }
+
+
+    private UserAccount addUserAccountToDataSource(CreateUserAccountRequest request) {
         UserAccount userAccount = new UserAccount(
                 null,
                 request.getOwnerEmail(),
@@ -119,20 +156,20 @@ public class UserAccountServiceImpl extends AbstractCommonService implements Use
         return userAccountRepository.save(userAccount);
     }
 
-    private void checkUserHaveRentScooter(String ownerEmail){
+    private void checkUserHaveRentScooter(String ownerEmail) {
         UserAccount userAccount = userAccountRepository.findByOwnerEmail(ownerEmail).get(0);
         try {
             userAccount.getScooter().getModelName();
-        }catch (NullPointerException ex){
-            throw  new CommonConflictException(msgSource.Err015);
+        } catch (NullPointerException ex) {
+            throw new CommonConflictException(msgSource.Err015);
         }
     }
 
-    private void checkUserExistByEmail(String ownerEmail){
-        List<UserAccount> userAccounts =userAccountRepository.findByOwnerEmail(ownerEmail);
+    private void checkUserExistByEmail(String ownerEmail) {
+        List<UserAccount> userAccounts = userAccountRepository.findByOwnerEmail(ownerEmail);
         try {
             userAccounts.get(0);
-        }catch (IndexOutOfBoundsException ex){
+        } catch (IndexOutOfBoundsException ex) {
             throw new CommonConflictException(msgSource.Err014);
         }
 
