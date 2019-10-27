@@ -1,11 +1,13 @@
 package com.ciemiorek.ScooterSystem.service.impl;
 
+import com.ciemiorek.ScooterSystem.api.response.ReturnInformationAboutScooterResponse;
 import com.ciemiorek.ScooterSystem.common.MsgSource;
 import com.ciemiorek.ScooterSystem.api.request.CreateUserAccountRequest;
 import com.ciemiorek.ScooterSystem.api.response.BasicResponse;
 import com.ciemiorek.ScooterSystem.api.response.CreateUserAccountResponse;
 import com.ciemiorek.ScooterSystem.exception.CommonBadRequestException;
 import com.ciemiorek.ScooterSystem.exception.CommonConflictException;
+import com.ciemiorek.ScooterSystem.model.Scooter;
 import com.ciemiorek.ScooterSystem.model.UserAccount;
 import com.ciemiorek.ScooterSystem.repository.UserAccountRepository;
 import com.ciemiorek.ScooterSystem.service.AbstractCommonService;
@@ -45,6 +47,15 @@ public class UserAccountServiceImpl extends AbstractCommonService implements Use
         return ResponseEntity.ok(BasicResponse.of(msgSource.OK002));
     }
 
+    @Override
+    public ResponseEntity<ReturnInformationAboutScooterResponse> getInformationAboutRentScooterByEmail(String email) {
+        checkUserExistByEmail(email);
+        checkUserHaveRentScooter(email);
+        List<UserAccount> listOfUser= userAccountRepository.findByOwnerEmail(email);
+        Scooter scooter = listOfUser.get(0).getScooter();
+        return ResponseEntity.ok(new ReturnInformationAboutScooterResponse(msgSource.OK005,scooter.getId(),scooter.getModelName(),scooter.getMaxSpeed(),scooter.getRentalPrice()));
+    }
+
     private void addRechargeAmountToUserAccountBalace(Long accountId, BigDecimal rechargeAmount) {
         Optional<UserAccount> userAccountData = userAccountRepository.findById(accountId);
         if (!userAccountData.isPresent()) {
@@ -58,7 +69,7 @@ public class UserAccountServiceImpl extends AbstractCommonService implements Use
     private BigDecimal extractAmountToBigDecimal(String amount) {
         try {
             return new BigDecimal(amount);
-        }catch (NullPointerException nfe) {
+        }catch (NumberFormatException nfe) {
             throw new CommonBadRequestException(msgSource.Err005);
         }
 
@@ -86,6 +97,7 @@ public class UserAccountServiceImpl extends AbstractCommonService implements Use
         }
     }
 
+
     private UserAccount addUserAccountToDataSource (CreateUserAccountRequest request) {
         UserAccount userAccount = new UserAccount(
                 null,
@@ -96,5 +108,24 @@ public class UserAccountServiceImpl extends AbstractCommonService implements Use
                 LocalDateTime.now()
         );
         return userAccountRepository.save(userAccount);
+    }
+
+    private void checkUserHaveRentScooter(String ownerEmail){
+        UserAccount userAccount = userAccountRepository.findByOwnerEmail(ownerEmail).get(0);
+        try {
+            userAccount.getScooter().getModelName();
+        }catch (NullPointerException ex){
+            throw  new CommonConflictException(msgSource.Err015);
+        }
+    }
+
+    private void checkUserExistByEmail(String ownerEmail){
+        List<UserAccount> userAccounts =userAccountRepository.findByOwnerEmail(ownerEmail);
+        try {
+            userAccounts.get(0);
+        }catch (IndexOutOfBoundsException ex){
+            throw new CommonConflictException(msgSource.Err014);
+        }
+
     }
 }

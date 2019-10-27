@@ -3,6 +3,7 @@ package com.ciemiorek.ScooterSystem.controller;
 import com.ciemiorek.ScooterSystem.api.request.CreateUserAccountRequest;
 import com.ciemiorek.ScooterSystem.api.response.BasicResponse;
 import com.ciemiorek.ScooterSystem.api.response.CreateUserAccountResponse;
+import com.ciemiorek.ScooterSystem.api.response.ReturnInformationAboutScooterResponse;
 import com.ciemiorek.ScooterSystem.service.UserAccountService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,12 +26,20 @@ public class UserAccountController {
         return userAccountService.createUserAccount(request);
     }
 
-    @PutMapping(value = "/{accountId/recharge" , produces = "application/jaon")
+    @PutMapping(value = "/{accountId}/recharge" , produces = "application/json")
     public ResponseEntity<BasicResponse> rechargeUserAccount(
             @PathVariable Long accountId,
-            @RequestBody String amount
+            @RequestParam String amount
     ) {
         return userAccountService.rechargeUserAccount(accountId,amount);
+    }
+
+
+    @GetMapping(value = "/scooter", produces = "application/json")
+    public ResponseEntity<ReturnInformationAboutScooterResponse> getUserScooter (
+            @RequestParam String email
+    ) {
+        return userAccountService.getInformationAboutRentScooterByEmail(email);
     }
 
 }
