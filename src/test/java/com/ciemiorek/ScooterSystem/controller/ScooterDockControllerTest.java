@@ -32,7 +32,7 @@ public class ScooterDockControllerTest {
     @Autowired
     private MockMvc mockMvc;
     @Autowired
-    private ScooterRepository scooterRepository;
+    private ScooterRepository  scooterRepository;
 
     @Test
     public void aIfGetScootersRequestIsCorrectShouldReturnHttpCode200AndInitialScooterList() throws Exception {
