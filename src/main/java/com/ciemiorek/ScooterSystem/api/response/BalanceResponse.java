@@ -4,6 +4,9 @@ import java.math.BigDecimal;
 
 public class BalanceResponse extends BasicResponse {
 
+    public BalanceResponse() {
+    }
+
     private BigDecimal balance;
 
     public BalanceResponse(String responseMsg, BigDecimal balance) {

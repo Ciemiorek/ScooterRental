@@ -6,7 +6,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.PropertySource;
 
 @SpringBootApplication
-@PropertySource("classpath:message.properties")
+@PropertySource(value = "classpath:message.properties", encoding = "UTF-8")
 @ComponentScan(basePackages = {
 
         "com.ciemiorek.ScooterSystem.controller",
